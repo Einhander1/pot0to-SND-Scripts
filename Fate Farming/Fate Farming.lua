@@ -2,14 +2,13 @@
 
 ********************************************************************************
 *                                Fate Farming                                  *
-*                               Version 2.21.11a                                 *
+*                               Version 2.21.11                                 *
 ********************************************************************************
 
 Created by: pot0to (https://ko-fi.com/pot0to)
-Contributors: Prawellp, Mavi, Allison, Einhander1
+Contributors: Prawellp, Mavi, Allison
 State Machine Diagram: https://github.com/pot0to/pot0to-SND-Scripts/blob/main/FateFarmingStateMachine.drawio.png
-    -> 2.21.11a Blacklisted "Fire Suppresion"
-                Added EnableTeleport setting to function TeleportToClosestAetheryteToFate
+
     -> 2.21.11  Added 1s wait after mount so you're firmly on the mount. Seems
                     like some languages like Chinese execute log and echo
                     messages faster than English, causing the next Pathfind step
@@ -1495,6 +1494,7 @@ function FlyBackToAetheryte()
         yield("/vnav stop")
         State = CharacterState.ready
         LogInfo("[FATE] State Change: Ready")
+		yield("/wait 10")
         return
     end
 
@@ -2392,7 +2392,6 @@ function Ready()
         if not HasTarget() or GetTargetName() ~= "aetheryte" or GetDistanceToTarget() > 20 then
             State = CharacterState.flyBackToAetheryte
             LogInfo("[FATE] State Change: FlyBackToAetheryte")
-			yield("/wait 10")
         else
             yield("/wait 10")
         end
