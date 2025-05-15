@@ -2,13 +2,14 @@
 
 ********************************************************************************
 *                                Fate Farming                                  *
-*                               Version 2.21.11                                 *
+*                               Version 2.21.11a                                 *
 ********************************************************************************
 
 Created by: pot0to (https://ko-fi.com/pot0to)
-Contributors: Prawellp, Mavi, Allison
+Contributors: Prawellp, Mavi, Allison, Einhander1
 State Machine Diagram: https://github.com/pot0to/pot0to-SND-Scripts/blob/main/FateFarmingStateMachine.drawio.png
-
+    -> 2.21.11a Blacklisted "Fire Suppresion"
+                Added EnableTeleport setting to function TeleportToClosestAetheryteToFate
     -> 2.21.11  Added 1s wait after mount so you're firmly on the mount. Seems
                     like some languages like Chinese execute log and echo
                     messages faster than English, causing the next Pathfind step
@@ -135,7 +136,10 @@ Echo                                = "All"         --Options: All/Gems/None
 
 CompanionScriptMode                 = false         --Set to true if you are using the fate script with a companion script (such as the Atma Farmer)
 
+EnableTeleport						= true			--Allow script to teleport to Fates... I'm a cheapskake
+
 --#endregion Settings
+
 
 --[[
 ********************************************************************************
@@ -815,7 +819,8 @@ FatesData = {
             blacklistedFates= {
                 "Young Volcanoes",
                 "Wolf Parade", -- multiple Pelupelu Peddler npcs, rng whether it tries to talk to the right one
-                "Panaq Attack" -- multiple Pelupleu Peddler npcs
+                "Panaq Attack", -- multiple Pelupleu Peddler npcs
+				"Fire Suppression" -- You seems to love the rock
             }
         }
     },
@@ -1312,7 +1317,7 @@ end
 
 function TeleportToClosestAetheryteToFate(nextFate)
     local aetheryteForClosestFate = GetClosestAetheryteToPoint(nextFate.x, nextFate.y, nextFate.z, 200)
-    if aetheryteForClosestFate ~=nil then
+    if EnableTeleport and aetheryteForClosestFate ~=nil then
         TeleportTo(aetheryteForClosestFate.aetheryteName)
         return true
     end
@@ -2387,6 +2392,7 @@ function Ready()
         if not HasTarget() or GetTargetName() ~= "aetheryte" or GetDistanceToTarget() > 20 then
             State = CharacterState.flyBackToAetheryte
             LogInfo("[FATE] State Change: FlyBackToAetheryte")
+			yield("/wait 10")
         else
             yield("/wait 10")
         end
